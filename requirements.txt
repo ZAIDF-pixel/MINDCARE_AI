@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+jinja2
+python-multipart
+pandas
+numpy
+scikit-learn
+joblib
+matplotlib
+python-dotenv
+groq

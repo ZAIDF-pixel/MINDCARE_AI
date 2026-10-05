@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f8f5">
+    <title>Check-in history | MindCare AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+{% include "partials/header.html" %}
+<main id="main-content" class="content-section wrap page-main" tabindex="-1">
+    <div class="page-heading">
+        <div><span class="eyebrow">YOUR REFLECTIONS</span><h1>Check-in history</h1><p>A record of your recent moments. Take what is useful and leave the rest.</p></div>
+        <a class="button button-outline" href="/">New check-in <span aria-hidden="true">＋</span></a>
+    </div>
+    <section class="panel table-panel">
+        <div class="table-scroll">
+            <table>
+                <thead><tr><th scope="col">Date</th><th scope="col">Category</th><th scope="col">Model confidence</th><th scope="col">Check-in</th></tr></thead>
+                <tbody>
+                {% for row in records %}
+                <tr><td>{{ row.timestamp }}</td><td><span class="category-tag">{{ row.emotion|title }}</span></td><td>{{ "%.1f"|format(row.confidence) }}%</td><td class="history-message">{{ row.message }}</td></tr>
+                {% else %}
+                <tr><td colspan="4" class="empty-state">No check-ins yet. <a href="/">Start with a few words</a> whenever you feel ready.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+{% include "partials/footer.html" %}
+</body>
+</html>

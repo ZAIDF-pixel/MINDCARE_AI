@@ -1,0 +1,14 @@
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header class="site-header">
+    <a class="brand" href="/" aria-label="MindCare AI home">
+        <span class="brand-mark" aria-hidden="true">✳</span>
+        <span>MindCare <span class="brand-accent">AI</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Main navigation">
+        <a href="/" {% if page == "home" %}aria-current="page"{% endif %}>Check-in</a>
+        <a href="/dashboard" {% if page == "dashboard" %}aria-current="page"{% endif %}>Dashboard</a>
+        <a href="/summary" {% if page == "summary" %}aria-current="page"{% endif %}>Summary</a>
+        <a href="/history" {% if page == "history" %}aria-current="page"{% endif %}>History</a>
+        <a href="/journal" {% if page == "journal" %}aria-current="page"{% endif %}>Journal</a>
+    </nav>
+</header>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f8f5">
+    <title>Journal | MindCare AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+{% include "partials/header.html" %}
+<main id="main-content" class="content-section wrap page-main" tabindex="-1">
+    <div class="page-heading"><div><span class="eyebrow">A PRIVATE SPACE</span><h1>Write it out.</h1><p>Make room for a thought, a small win, or anything you want to remember.</p></div></div>
+    <form class="panel journal-form" action="/journal" method="post">
+        <label for="title">A title for this moment <span class="optional-label">OPTIONAL</span></label>
+        <input id="title" name="title" maxlength="120" placeholder="A small thing I noticed">
+        <label for="content">Your reflection</label>
+        <textarea id="content" name="content" maxlength="10000" required placeholder="Start wherever you are…"></textarea>
+        <div class="form-footer"><small>Journal entries stay in this app's database and are not sent to Groq.</small><button class="button button-dark" type="submit">Save reflection <span aria-hidden="true">→</span></button></div>
+    </form>
+    {% if saved %}<div class="alert success" role="status">Your reflection has been saved.</div>{% endif %}
+    {% if entries %}
+    <section class="journal-list"><div class="section-heading left-heading"><span class="eyebrow">RECENT ENTRIES</span><h2>From your journal</h2></div>
+        {% for entry in entries %}
+        <article class="journal-entry"><div class="journal-entry-top"><h3>{{ entry.title or "A reflection" }}</h3><time>{{ entry.timestamp }}</time></div><p>{{ entry.content }}</p></article>
+        {% endfor %}
+    </section>
+    {% endif %}
+</main>
+{% include "partials/footer.html" %}
+</body>
+</html>

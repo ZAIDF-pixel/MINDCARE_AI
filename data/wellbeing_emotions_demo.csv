@@ -1,0 +1,49 @@
+text,label
+I feel happy today,positive
+I am excited about my day,positive
+I feel good and positive,positive
+I am enjoying my time,positive
+I feel proud of my progress,positive
+I feel hopeful today,positive
+I had a really good day,positive
+I feel motivated to study,positive
+I feel calm today,neutral
+Nothing much is happening today,neutral
+I feel normal right now,neutral
+I am doing okay,neutral
+My day is going normally,neutral
+Things feel ordinary today,neutral
+I am following my normal routine,neutral
+I feel okay about everything,neutral
+I have too much work and feel stressed,stress
+My exams are stressing me,stress
+I feel pressure from my assignments,stress
+I have many deadlines,stress
+College work is making me stressed,stress
+I feel overwhelmed by my workload,stress
+I need a break from studying,stress
+I feel pressured about my studies,stress
+I feel sad today,sad
+I have been feeling down lately,sad
+Today has been difficult and I feel unhappy,sad
+I feel lonely today,sad
+I am disappointed and sad,sad
+I feel low today,sad
+I am having a difficult emotional day,sad
+I feel unhappy about what happened,sad
+I am angry about what happened,anger
+I feel irritated today,anger
+I am frustrated with this situation,anger
+This situation is making me angry,anger
+I am annoyed by what happened,anger
+I feel upset and frustrated,anger
+I am having trouble with my frustration,anger
+I feel angry about the situation,anger
+I am worried about tomorrow,anxiety
+I feel nervous about my results,anxiety
+I keep worrying about my studies,anxiety
+I feel nervous before exams,anxiety
+I am worried about what might happen,anxiety
+I feel uneasy about my future,anxiety
+I am nervous about an upcoming event,anxiety
+I cannot stop worrying about my work,anxiety

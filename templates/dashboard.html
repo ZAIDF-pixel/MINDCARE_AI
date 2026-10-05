@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f8f5">
+    <title>Your dashboard | MindCare AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+{% include "partials/header.html" %}
+<main id="main-content" class="content-section wrap page-main" tabindex="-1">
+    <div class="page-heading">
+        <div><span class="eyebrow">YOUR OVERVIEW</span><h1>A gentle look back.</h1><p>These broad categories are model predictions, not medical assessments.</p></div>
+        <a class="button button-outline" href="/">New check-in <span aria-hidden="true">＋</span></a>
+    </div>
+
+    <div class="stats-grid">
+        <article class="stat-card"><span class="stat-label">CHECK-INS</span><strong>{{ total }}</strong><span class="stat-foot">saved moments</span></article>
+        <article class="stat-card"><span class="stat-label">AVG. MODEL CONFIDENCE</span><strong>{{ avg_conf }}<small>%</small></strong><span class="stat-foot">not a measure of certainty</span></article>
+        <article class="stat-card"><span class="stat-label">MOST COMMON CATEGORY</span><strong class="stat-word">{% if counts %}{{ counts|dictsort(by='value')|last|first|title }}{% else %}—{% endif %}</strong><span class="stat-foot">across recent check-ins</span></article>
+    </div>
+
+    <div class="dashboard-grid">
+        <section class="panel chart-panel">
+            <div class="panel-heading"><div><span class="eyebrow">AT A GLANCE</span><h2>Check-in categories</h2></div><span class="panel-mark" aria-hidden="true">◒</span></div>
+            {% if counts %}
+            {% set chart_max = counts.values()|max %}
+            <div class="distribution-list" aria-label="Check-in category distribution">
+                {% for category, count in counts|dictsort(by='value', reverse=true) %}
+                <div class="distribution-row">
+                    <div class="distribution-label"><span>{{ category|title }}</span><strong>{{ count }}</strong></div>
+                    <div class="distribution-track" role="meter" aria-label="{{ category|title }} check-ins" aria-valuemin="0" aria-valuemax="{{ chart_max }}" aria-valuenow="{{ count }}"><span style="width: {{ (count / chart_max * 100)|round(1) }}%"></span></div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-state">Your category chart will appear after your first check-in.</p>
+            {% endif %}
+        </section>
+        <section class="panel latest-panel">
+            <div class="panel-heading"><div><span class="eyebrow">MOST RECENT</span><h2>Your latest check-in</h2></div><span class="panel-mark" aria-hidden="true">↗</span></div>
+            {% if latest %}
+            <span class="category-tag">{{ latest.emotion|title }}</span>
+            <p class="latest-message">{{ latest.message }}</p>
+            <small class="muted">{{ latest.timestamp }}</small>
+            {% else %}
+            <p class="empty-state">No check-ins yet. When you feel ready, <a href="/">start with a few words</a>.</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <section class="summary-promo">
+        <div class="summary-promo-copy"><span class="eyebrow">OPTIONAL · GROQ</span><h2>A little perspective</h2><p>Request a gentle summary based on recent category labels and timestamps. Your check-in text is not sent to Groq.</p>
+        {% if not groq_enabled %}<p class="config-note">Summaries are not configured on this deployment. Add a Groq API key to enable this optional feature.</p>{% endif %}</div>
+        <a class="button button-dark" href="/summary">Open summaries</a>
+    </section>
+</main>
+{% include "partials/footer.html" %}
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f8f5">
+    <meta name="description" content="A calm, private space for a wellbeing check-in and personal reflection.">
+    <title>MindCare AI | A moment for you</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+{% include "partials/header.html" %}
+
+<main id="main-content" tabindex="-1">
+    <section class="hero">
+        <div class="hero-copy">
+            <span class="eyebrow"><span class="eyebrow-dot"></span> YOUR PERSONAL WELLBEING SPACE</span>
+            <h1>A little space<br>to <span>check in.</span></h1>
+            <p class="hero-lede">Pause for a moment. Put what is on your mind into words and receive a gentle, general reflection.</p>
+            <a class="button button-dark" href="#checkin">Start a check-in <span aria-hidden="true">↓</span></a>
+            <div class="hero-note"><span aria-hidden="true">◉</span> Your check-in is analyzed locally on this app.</div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+            <div class="orb orb-large"></div>
+            <div class="orb orb-small"></div>
+            <div class="orbit orbit-one"></div>
+            <div class="orbit orbit-two"></div>
+            <div class="art-caption"><span class="art-spark">✳</span><span>Take it<br>one moment<br>at a time.</span></div>
+            <span class="art-leaf leaf-one">〰</span>
+            <span class="art-leaf leaf-two">✳</span>
+        </div>
+    </section>
+
+    <section class="notice wrap" role="note">
+        <span class="notice-icon" aria-hidden="true">i</span>
+        <p><strong>A gentle reminder</strong> MindCare AI is an educational tool. It does not diagnose or treat mental-health conditions.</p>
+    </section>
+
+    <section id="checkin" class="content-section wrap">
+        <div class="section-heading">
+            <span class="eyebrow">MOOD CHECK-IN</span>
+            <h2>How are things feeling?</h2>
+            <p>There is no right answer. Share only what feels comfortable.</p>
+        </div>
+
+        <form action="/analyze#analysis-result" method="post" class="checkin-card" id="checkin-form">
+            <label for="message">What would you like to get off your mind?</label>
+            <textarea id="message" name="message" maxlength="2000" required placeholder="Take a breath and write a few words…"></textarea>
+            <div class="form-footer">
+                <small>Your words are not sent to Groq. AI summaries are only generated when you request one from your dashboard.</small>
+                <button class="button button-dark" type="submit" id="analyze-button">Show my reflection</button>
+            </div>
+        </form>
+
+        <div id="analysis-result" class="analysis-result" tabindex="-1" aria-live="polite" aria-atomic="true">
+        {% if error %}
+        <div class="alert danger" role="alert">{{ error }}</div>
+        {% endif %}
+
+        {% if result %}
+        <section class="result-card {% if result.safety %}result-safety{% endif %}">
+            <div class="result-topline">
+                <div class="result-symbol" aria-hidden="true">{% if result.safety %}♡{% else %}✳{% endif %}</div>
+                <div><span class="eyebrow">A MOMENT TO NOTICE</span><h2>{{ result.emotion }}</h2></div>
+            </div>
+            {% if not result.safety %}
+            <div class="confidence">
+                <div><span>Model confidence</span><strong>{{ result.confidence }}%</strong></div>
+                <div class="confidence-track" role="meter" aria-label="Model confidence" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ result.confidence }}"><span style="width: {{ result.confidence }}%"></span></div>
+                <small>This is a broad text category, not a measure of how you feel.</small>
+            </div>
+            {% endif %}
+            <div class="support-note"><h3>A gentle suggestion</h3><p>{{ result.response }}</p></div>
+            {% if result.tips %}
+            <h3 class="try-heading">Something small you could try</h3>
+            <ul class="tip-list">{% for tip in result.tips %}<li>{{ tip }}</li>{% endfor %}</ul>
+            {% endif %}
+        </section>
+        {% endif %}
+        </div>
+    </section>
+
+    <section class="ways-section">
+        <div class="wrap">
+            <div class="section-heading">
+                <span class="eyebrow">A FEW WAYS TO REFLECT</span>
+                <h2>Support for your everyday</h2>
+            </div>
+            <div class="ways-grid">
+                <a class="way-card" href="/dashboard"><span class="way-number">01</span><span class="way-icon" aria-hidden="true">◒</span><h3>Notice patterns</h3><p>See your check-in categories together in one simple dashboard.</p><span class="way-link">Explore dashboard →</span></a>
+                <a class="way-card" href="/journal"><span class="way-number">02</span><span class="way-icon" aria-hidden="true">⌁</span><h3>Make room to write</h3><p>Keep a private journal for the thoughts you want to hold onto.</p><span class="way-link">Open your journal →</span></a>
+                <a class="way-card" href="/history"><span class="way-number">03</span><span class="way-icon" aria-hidden="true">↗</span><h3>Look back gently</h3><p>Review your past check-ins whenever it feels helpful.</p><span class="way-link">View your history →</span></a>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% include "partials/footer.html" %}
+<script>
+(() => {
+    const form = document.getElementById("checkin-form");
+    const resultRegion = document.getElementById("analysis-result");
+    const submitButton = document.getElementById("analyze-button");
+
+    if (!form || !resultRegion || !submitButton) return;
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        submitButton.disabled = true;
+        submitButton.textContent = "Preparing your reflection…";
+        resultRegion.setAttribute("aria-busy", "true");
+
+        try {
+            const response = await fetch(form.action, {
+                method: form.method,
+                body: new FormData(form),
+                headers: { "X-Requested-With": "fetch" }
+            });
+            if (!response.ok) throw new Error("The check-in could not be processed.");
+
+            const documentFromResponse = new DOMParser().parseFromString(
+                await response.text(),
+                "text/html"
+            );
+            const updatedResult = documentFromResponse.getElementById("analysis-result");
+            if (!updatedResult) throw new Error("The result could not be displayed.");
+
+            resultRegion.replaceChildren(...Array.from(updatedResult.childNodes));
+            resultRegion.setAttribute("aria-busy", "false");
+            resultRegion.scrollIntoView({ behavior: "smooth", block: "start" });
+            resultRegion.focus({ preventScroll: true });
+        } catch (error) {
+            resultRegion.replaceChildren();
+            const message = document.createElement("p");
+            message.className = "alert danger";
+            message.setAttribute("role", "alert");
+            message.textContent = "We couldn’t show your reflection. Please check your connection and try again.";
+            resultRegion.append(message);
+            resultRegion.setAttribute("aria-busy", "false");
+            resultRegion.scrollIntoView({ behavior: "smooth", block: "start" });
+            resultRegion.focus({ preventScroll: true });
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = "Show my reflection";
+        }
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f8f5">
+    <title>Your wellbeing summary | MindCare AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+{% include "partials/header.html" %}
+<main id="main-content" class="content-section wrap page-main summary-page" tabindex="-1">
+    <div class="page-heading"><div><span class="eyebrow">OPTIONAL AI REFLECTION</span><h1>Your summaries</h1><p>Ask Groq for a short reflection based on your recent check-in categories.</p></div></div>
+    <section class="summary-request">
+        <p>Your words and journal entries are not sent to Groq. Only category labels and timestamps are used.</p>
+        {% if not groq_enabled %}
+        <p class="config-note">Summaries are not configured yet. Add a Groq API key to enable this feature.</p>
+        {% endif %}
+        <form action="/summary" method="post">
+            <button class="button button-dark" type="submit" {% if not groq_enabled %}disabled{% endif %}>Generate a summary</button>
+        </form>
+    </section>
+    {% if summary %}
+    <section class="summary-card">
+        <p class="summary-text">{{ summary }}</p>
+        <p class="summary-privacy">Only category labels and timestamps are used for this summary. Your check-in text and journal entries are not sent to Groq.</p>
+    </section>
+    {% endif %}
+    <a class="button button-outline summary-back" href="/dashboard">Back to dashboard</a>
+</main>
+{% include "partials/footer.html" %}
+</body>
+</html>
